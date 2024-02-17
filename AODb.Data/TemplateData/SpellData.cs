@@ -65,28 +65,6 @@ namespace AODb.Data.TemplateData
                     this.Items.Add(spell);
                 }
             }
-
-            // Funcom finds counting difficult so
-            // catch any extra spells they missed
-            // bool actuallyDone = false;
-
-            // while(!actuallyDone && reader.BaseStream.Position < reader.BaseStream.Length)
-            // {
-            //     int key = reader.ReadInt32();
-            //     if((key & 0xCF00) == 0xCF00) 
-            //     {
-            //         Spell spell = CreateSpellWithKey(key);
-            //         if(spell != null)
-            //         {
-            //             spell.PopulateFromStream(reader);
-            //             this.Items.Add(spell);
-            //         }
-            //     }
-            //     else{
-            //         reader.BaseStream.Position -= 4;
-            //         actuallyDone = true;
-            //     }
-            // }
         }
 
         private Spell CreateSpellWithKey(int spellKey)

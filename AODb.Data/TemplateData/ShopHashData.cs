@@ -53,25 +53,6 @@ namespace AODb.Data.TemplateData
                 hash.PopulateFromStream(reader);
                 this.Items.Add(hash);
             }
-
-            // Funcom finds counting difficult so
-            // catch any extra hashes they missed
-            // bool actuallyDone = false;
-            // while(!actuallyDone && reader.BaseStream.Position < reader.BaseStream.Length)
-            // {
-            //     byte key = reader.ReadByte();
-            //     if(key > 0x23) 
-            //     {
-            //         reader.BaseStream.Position -= 1;
-            //         ShopHashEntry hash = new ShopHashEntry();
-            //         hash.PopulateFromStream(reader);
-            //         this.Items.Add(hash);
-            //     }
-            //     else{
-            //         reader.BaseStream.Position -= 1;
-            //         actuallyDone = true;
-            //     }
-            // }
         }
     }
 }
