@@ -117,10 +117,8 @@ namespace AODb.Data
             this.TickCount = reader.ReadInt32();
             this.TickInterval = reader.ReadInt32();
             this.Target = (Target)reader.ReadInt32();
-
-            confirm = reader.ReadInt32();
-            if(confirm != 9) { throw new Exception("CONFIRMATION CHECK FAILED!"); }
-
+            this.Unknown2 = reader.ReadInt32();
+            
             Type type = this.GetType();
             PropertyInfo[] properties = type.GetProperties()
                 .Where(p => Attribute.IsDefined(p, typeof(StreamDataAttribute)))
@@ -156,6 +154,8 @@ namespace AODb.Data
                     else if (property.PropertyType == typeof(AoEntity)) { property.SetValue(this, (AoEntity)reader.ReadInt32()); }
                     else if (property.PropertyType == typeof(Breed)) { property.SetValue(this, (Breed)reader.ReadInt32()); }
                     else if (property.PropertyType == typeof(Gender)) { property.SetValue(this, (Gender)reader.ReadInt32()); }
+                    else if (property.PropertyType == typeof(TrySneakModifier)) { property.SetValue(this, (TrySneakModifier)reader.ReadInt32()); }
+                    else if (property.PropertyType == typeof(bool)) { property.SetValue(this, Convert.ToBoolean(reader.ReadInt32())); }
                     else { throw new Exception($"Unhandled property type: {property.PropertyType}"); }
                 }
             }
