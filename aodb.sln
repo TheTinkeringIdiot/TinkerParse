@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AODb.Common", "AODb.Common\AODb.Common.csproj", "{6227A9F7-5951-4E13-A470-3051C6FA5515}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AODb.Data", "AODb.Data\AODb.Data.csproj", "{9DAE2EEE-F395-49C8-8676-ACBE70A490B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csproj", "{F8922F90-8652-4823-81EA-AC6E87149D74}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6227A9F7-5951-4E13-A470-3051C6FA5515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6227A9F7-5951-4E13-A470-3051C6FA5515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6227A9F7-5951-4E13-A470-3051C6FA5515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6227A9F7-5951-4E13-A470-3051C6FA5515}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DAE2EEE-F395-49C8-8676-ACBE70A490B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DAE2EEE-F395-49C8-8676-ACBE70A490B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DAE2EEE-F395-49C8-8676-ACBE70A490B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DAE2EEE-F395-49C8-8676-ACBE70A490B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8922F90-8652-4823-81EA-AC6E87149D74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8922F90-8652-4823-81EA-AC6E87149D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8922F90-8652-4823-81EA-AC6E87149D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8922F90-8652-4823-81EA-AC6E87149D74}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
