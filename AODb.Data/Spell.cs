@@ -33,7 +33,7 @@ namespace AODb.Data
     /// Instance seems to always be 0
     /// </summary>
     [Serializable]
-    public class Spell : Base
+    public class Spell
     {
         #region Header info
         /*
@@ -91,10 +91,10 @@ namespace AODb.Data
             this.Criteria = new List<Criterion>();
         }
 
-        public override string ToString()
-        {
-            return this.Identity.ToString();
-        }
+        // public override string ToString()
+        // {
+        //     return this.Identity.ToString();
+        // }
 
         public void PopulateFromStream(BinaryReader reader)
         {

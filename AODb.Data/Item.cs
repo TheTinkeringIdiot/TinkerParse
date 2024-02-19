@@ -26,21 +26,21 @@ namespace AODb.Data
         public uint UNK1 { get; set; }
 
 
-        public List<StatValue> StatValues;
+        public List<StatValue> StatValues { get; set; }
 
-        public string Name;
-        public string Description;
+        public string Name { get; set; }
+        public string Description { get; set; }
 
-        public AtkDefData AttackDefenseData;
-        public AnimationMesh AnimationMesh;
+        public AtkDefData AttackDefenseData { get; set; }
+        public AnimationMesh AnimationMesh { get; set; }
 
-        public ActionData ActionData;
+        public ActionData ActionData { get; set; }
 
-        public List<SpellData> SpellData;
+        public List<SpellData> SpellData { get; set; }
 
-        public Sounds Sounds;
+        public Sounds Sounds { get; set; }
 
-        public ShopHashData ShopHashData;
+        public ShopHashData ShopHashData { get; set; }
 
         public Item() 
         { 

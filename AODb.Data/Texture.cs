@@ -11,22 +11,11 @@ using AODb.Data.TemplateData;
 
 namespace AODb.Data
 {
-    public class Texture
+    public class Texture : TextureBase
     {
-        [StreamData(0)]
-        public uint DBType { get; set; }
-
-        [StreamData(1)]
-        public uint AOID { get; set; }
-
-        [StreamData(2)]
-        public uint Version { get; set; }
-
-        public byte[] JpegData { get; private set; }
-
         public Texture() { }
 
-        public void PopulateFromStream(BinaryReader reader)
+        public override void PopulateFromStream(BinaryReader reader)
         {
             Type type = this.GetType();
             PropertyInfo[] properties = type.GetProperties()
@@ -43,10 +32,20 @@ namespace AODb.Data
                     property.SetValue(this, reader.ReadUInt32());
                 }
             }
+
+            byte peek = reader.ReadByte();
+            reader.BaseStream.Position -= 1;
+            if(peek != 0xff && peek != 0x89)
+            {
+                //this is a ground texture, it has a name
+                string fullName = Encoding.Default.GetString(reader.ReadBytes(24));
+                this.Name = fullName.Substring(0, fullName.IndexOf('\x00'));
+            }
+
             long total = reader.BaseStream.Length;
             long pos = reader.BaseStream.Position;
 
-            this.JpegData = reader.ReadBytes((int)(total - pos));
+            this.ImgData = reader.ReadBytes((int)(total - pos));
         }
     }
 }

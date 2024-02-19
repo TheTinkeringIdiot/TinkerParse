@@ -23,15 +23,15 @@ using System.IO;
 
 namespace AODb.Data.TemplateData
 {
-    public class ActionData : TemplateDataBase
+    public class ActionData
     {
         public List<TemplateActionData> Actions { get; set; }
 
-        public ActionData(TemplateDataBase source)
-            : base(source)
-        {
-            this.Actions = new List<TemplateActionData>();
-        }
+        // public ActionData(TemplateDataBase source)
+        //     : base(source)
+        // {
+        //     this.Actions = new List<TemplateActionData>();
+        // }
 
         public ActionData()
         {

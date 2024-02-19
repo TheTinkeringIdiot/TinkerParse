@@ -27,24 +27,24 @@ using AODb.Data.Attributes;
 
 namespace AODb.Data.TemplateData
 {
-    public class SpellData : TemplateDataBase
+    public class SpellData
     {
         public List<Spell> Items { get; set; }
         // public TemplateEvent Event { get { return (TemplateEvent)this.Identity.Instance; } }
         public TemplateEvent Event { get; set; }
 
-        public SpellData(TemplateDataBase source)
-            : base(source) { }
+        // public SpellData(TemplateDataBase source)
+        //     : base(source) { }
 
         public SpellData()
         {
             this.Items = new List<Spell>();
         }
 
-        public override string ToString()
-        {
-            return String.Format("{0}: {1} spells.", this.Event, this.Entries);
-        }
+        // public override string ToString()
+        // {
+        //     return String.Format("{0}: {1} spells.", this.Event, this.Entries);
+        // }
 
         public void PopulateFromStream(BinaryReader reader)
         {
