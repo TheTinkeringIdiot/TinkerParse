@@ -269,6 +269,7 @@ namespace AODb.Data
         Playfield1 = 1000001,
         Playfield_UNKNOWN8 = 1000008,
         Tilemap = 1000009,       // What does that even mean?
+        ModelInfo = 1000010,  // Index of model info
         PlayfieldBsp = 1000012,
         CollisionData = 1000013,
         PlayfieldSpawn = 1000014,
@@ -287,9 +288,9 @@ namespace AODb.Data
         #endregion
        
         #region 1010000
-        Mesh = 1010001,
-        CATMesh = 1010002,
-        CATAnim = 1010003,
+        Mesh = 1010001,  // abiff model meshes
+        CATMesh = 1010002,  // Character models
+        CATAnim = 1010003,  // Character animations
         Texture = 1010004,
         Text = 1010005,
         GroundTexture = 1010006,

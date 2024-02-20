@@ -63,11 +63,19 @@ namespace TinkerParser
         private List<Texture> DtmTextures = new List<Texture>();
         private List<Texture> DtsTextures = new List<Texture>();
 
+        private ModelData ModelData { get; set; }
+
         public TinkerParser(string aoPath, string outputPath)
         {
             Directory.SetCurrentDirectory(aoPath);
             this.rdbController = new RdbController(aoPath);
             this.outputPath = outputPath;
+
+            //Experimental - parse beginnings of model data
+            // BinaryReader reader = rdbController.Get((int)RdbRecordType.ModelInfo, 1);
+            // ModelData mi = new ModelData();
+            // mi.PopulateFromStream(reader);
+            // this.ModelData = mi;
         }
 
         public void ParseAllItems()
