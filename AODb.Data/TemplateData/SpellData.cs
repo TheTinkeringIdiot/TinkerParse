@@ -23,7 +23,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using AODb.Data.Attributes;
+using Newtonsoft.Json.Converters;
+using LowlandTech.TinyTools;
 
 namespace AODb.Data.TemplateData
 {
@@ -31,6 +34,8 @@ namespace AODb.Data.TemplateData
     {
         public List<Spell> Items { get; set; }
         // public TemplateEvent Event { get { return (TemplateEvent)this.Identity.Instance; } }
+
+        [JsonConverter(typeof(StringEnumConverter))]
         public TemplateEvent Event { get; set; }
 
         // public SpellData(TemplateDataBase source)
@@ -62,6 +67,10 @@ namespace AODb.Data.TemplateData
                 if(spell != null)
                 {
                     spell.PopulateFromStream(reader);
+                    if(spell.SpellFormat != null) 
+                    {
+                        spell.SpellDescription = spell.SpellFormat.Interpolate(spell);
+                    }
                     this.Items.Add(spell);
                 }
             }

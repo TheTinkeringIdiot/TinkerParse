@@ -64,31 +64,31 @@ namespace AODb.Data
         #endregion
 
         #region Attack and Defense Skills
-        public StatValue[] AttackSkills
-        {
-            get
-            {
-                var block = this.GetDataBlock<AtkDefData>();
-                if (block == null) 
-                { 
-                    return new StatValue[0]; 
-                }
-                return block.Attack.ToArray();
-            }
-        }
+        // public StatValue[] AttackSkills
+        // {
+        //     get
+        //     {
+        //         var block = this.GetDataBlock<AtkDefData>();
+        //         if (block == null) 
+        //         { 
+        //             return new StatValue[0]; 
+        //         }
+        //         return block.Attack.ToArray();
+        //     }
+        // }
 
-        public StatValue[] DefenseSkills
-        {
-            get
-            {
-                var block = this.GetDataBlock<AtkDefData>();
-                if (block == null) 
-                { 
-                    return new StatValue[0]; 
-                }
-                return block.Defense.ToArray();
-            }
-        }
+        // public StatValue[] DefenseSkills
+        // {
+        //     get
+        //     {
+        //         var block = this.GetDataBlock<AtkDefData>();
+        //         if (block == null) 
+        //         { 
+        //             return new StatValue[0]; 
+        //         }
+        //         return block.Defense.ToArray();
+        //     }
+        // }
         #endregion
 
         #region Other

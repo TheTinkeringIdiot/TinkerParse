@@ -25,17 +25,17 @@ using System.Reflection;
 
 namespace AODb.Data.TemplateData
 {
-    public class AtkDefData : TemplateDataBase
+    public class AtkDefData
     {
         public List<StatValue> Attack { get; private set; }
         public List<StatValue> Defense { get; private set; }
 
-        public AtkDefData(TemplateDataBase source)
-            : base(source)
-        {
-            this.Attack = new List<StatValue>();
-            this.Defense = new List<StatValue>();
-        }
+        // public AtkDefData(TemplateDataBase source)
+        //     : base(source)
+        // {
+        //     this.Attack = new List<StatValue>();
+        //     this.Defense = new List<StatValue>();
+        // }
 
         public AtkDefData()
         {

@@ -21,11 +21,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.Marshalling;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace AODb.Data
 {
     public class TemplateActionData
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         public TemplateAction Action { get; set; }
         public List<Criterion> Criteria { get; set; }
 

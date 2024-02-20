@@ -22,7 +22,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using AODb.Common.Attributes;
+using Newtonsoft.Json.Converters;
+using System.Data;
 
 namespace AODb.Data
 {
@@ -32,7 +35,8 @@ namespace AODb.Data
         /// <summary>
         /// This is Stat enum for Operator.Stat*, but other things for other operators.
         /// </summary>
-        [StreamData(100)]
+        [StreamData(100)]  
+        [JsonConverter(typeof(TryStringEnumConverter))]
         public int Value1 { get; set; }
 
         /// <summary>
@@ -42,6 +46,7 @@ namespace AODb.Data
         public int Value2 { get; set; }
 
         [StreamData(300)]
+        [JsonConverter(typeof(StringEnumConverter))]
         public Operator Operator { get; set; }
 
         public override string ToString()
@@ -66,6 +71,40 @@ namespace AODb.Data
                     if(property.PropertyType == typeof(Operator)) { property.SetValue(this, (Operator)reader.ReadInt32()); }
                     else { property.SetValue(this, reader.ReadInt32()); }        
                 }
+            }
+        }
+
+        public class TryStringEnumConverter : JsonConverter
+        {
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                // Criterion values are usually stat values, but not always 
+                // try converting Stat and fail back to int if it's not a stat
+                uint val = (uint)(int)value;
+                if(Enum.IsDefined(typeof(Stat), val))
+                {
+                    Stat val1 = (Stat)val;
+                    writer.WriteValue(val1.ToString());
+                }
+                else
+                {
+                    writer.WriteValue(value);
+                }
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool CanRead
+            {
+                get { return false; }
+            }
+
+            public override bool CanConvert(Type objectType)
+            {
+                throw new NotImplementedException();
             }
         }
     }

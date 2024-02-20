@@ -23,7 +23,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using AODb.Common.Attributes;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 namespace AODb.Data
 {
     [Serializable]
@@ -35,6 +36,7 @@ namespace AODb.Data
         }
 
         [StreamData(100)]
+        [JsonConverter(typeof(StringEnumConverter))]
         public Stat Stat { get; set; }
 
         [StreamData(200)]

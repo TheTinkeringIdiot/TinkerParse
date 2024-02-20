@@ -24,7 +24,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
 using AODb.Common.Attributes;
+using Newtonsoft.Json.Converters;
+using AODb.Data.Attributes;
 
 namespace AODb.Data
 {
@@ -64,7 +67,8 @@ namespace AODb.Data
         #region Activation info
         /// <summary>
         /// The target in which this function is applied to. TODO: Convert to enum
-        /// </summary>
+        /// </summary> 
+        [JsonConverter(typeof(StringEnumConverter))]
         public Target Target { get; set; }
 
         /// <summary>
@@ -85,6 +89,11 @@ namespace AODb.Data
          * 
          */
         public int Unknown2 { get; set; }
+
+        public uint SpellID { get; set; }
+        public string SpellFormat { get; set; }
+
+        public string SpellDescription { get; set; }
 
         public Spell()
         {
@@ -159,6 +168,12 @@ namespace AODb.Data
                     else { throw new Exception($"Unhandled property type: {property.PropertyType}"); }
                 }
             }
+
+            var spellIdAttrib = type.GetCustomAttribute<SpellIdAttribute>();
+            if(spellIdAttrib != null) { this.SpellID = spellIdAttrib.ID; }
+
+            var spellFormatAttrib = type.GetCustomAttribute<SpellFormatAttribute>();
+            if(spellFormatAttrib != null) { this.SpellFormat = spellFormatAttrib.Format; }
         }
     }
 }

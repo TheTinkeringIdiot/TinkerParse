@@ -80,6 +80,11 @@ namespace TinkerParser
                 item.PopulateFromStream(reader);
                 this.Items.Add(item);
             }
+
+            // BinaryReader reader = rdbController.Get((int)RdbRecordType.Item, 156771);
+            // Item item = new Item();
+            // item.PopulateFromStream(reader);
+            // this.Items.Add(item);
         }
 
         public void ParseAllNanos()
@@ -91,6 +96,18 @@ namespace TinkerParser
                 NanoProgram nano = new NanoProgram();
                 nano.PopulateFromStream(reader);
                 this.Nanos.Add(nano);
+            }
+        }
+
+        public void WriteJsonItems()
+        {
+            string fileName = Path.Join(this.outputPath, "items.json");
+            using(StreamWriter file = File.CreateText(fileName))
+            {
+                // foreach(Item item in this.Items)
+                // {
+                file.Write(JsonConvert.SerializeObject(this.Items, Formatting.Indented));
+                // }
             }
         }
 
@@ -277,7 +294,11 @@ namespace TinkerParser
 
             TinkerParser tinkerParser = new TinkerParser(opts.AoPath, opts.OutputDir);
 
-            if(opts.Items) { tinkerParser.ParseAllItems(); }
+            if(opts.Items) 
+            { 
+                tinkerParser.ParseAllItems(); 
+                if(opts.OutputJson) { tinkerParser.WriteJsonItems(); }
+            }
             if(opts.Nanos) { tinkerParser.ParseAllNanos(); }
             if(opts.Icons) 
             { 
