@@ -87,6 +87,15 @@ namespace TinkerParser
             // this.Items.Add(item);
         }
 
+        public void WriteJsonItems()
+        {
+            string fileName = Path.Join(this.outputPath, "items.json");
+            using(StreamWriter file = File.CreateText(fileName))
+            {
+                file.Write(JsonConvert.SerializeObject(this.Items, Formatting.Indented));
+            }
+        }
+
         public void ParseAllNanos()
         {
             Console.WriteLine("Parsing Nanos...");
@@ -99,15 +108,12 @@ namespace TinkerParser
             }
         }
 
-        public void WriteJsonItems()
+        public void WriteJsonNanos()
         {
-            string fileName = Path.Join(this.outputPath, "items.json");
+            string fileName = Path.Join(this.outputPath, "nanos.json");
             using(StreamWriter file = File.CreateText(fileName))
             {
-                // foreach(Item item in this.Items)
-                // {
-                file.Write(JsonConvert.SerializeObject(this.Items, Formatting.Indented));
-                // }
+                file.Write(JsonConvert.SerializeObject(this.Nanos, Formatting.Indented));
             }
         }
 
@@ -299,7 +305,11 @@ namespace TinkerParser
                 tinkerParser.ParseAllItems(); 
                 if(opts.OutputJson) { tinkerParser.WriteJsonItems(); }
             }
-            if(opts.Nanos) { tinkerParser.ParseAllNanos(); }
+            if(opts.Nanos) 
+            { 
+                tinkerParser.ParseAllNanos();
+                if(opts.OutputJson) { tinkerParser.WriteJsonNanos(); } 
+            }
             if(opts.Icons) 
             { 
                 tinkerParser.ParseAllIcons();
