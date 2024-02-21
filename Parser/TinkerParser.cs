@@ -343,18 +343,6 @@ namespace TinkerParser
                 tinkerParser.ParseAllBodyTextures(); 
                 tinkerParser.WriteBodyTextures();
             }
-
-            // BinaryReader reader = rdbController.Get((int)RdbRecordType.MinimapTextures, 6553601);
-
-            // BinaryReader reader = rdbController.Get((int)RdbRecordType.NanoProgram, 76724);
-            // NanoProgram item = new NanoProgram();
-            // item.PopulateFromStream(reader);
-
-            // string jsontest = JsonConvert.SerializeObject(item, Formatting.Indented);
-            
-            // Console.WriteLine(jsontest);
-            // Console.WriteLine(jsontest);
-
         }
     }
 }
