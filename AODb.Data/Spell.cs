@@ -68,7 +68,7 @@ namespace AODb.Data
         /// <summary>
         /// The target in which this function is applied to. TODO: Convert to enum
         /// </summary> 
-        [JsonConverter(typeof(StringEnumConverter))]
+        //[JsonConverter(typeof(StringEnumConverter))]
         public Target Target { get; set; }
 
         /// <summary>
@@ -147,7 +147,9 @@ namespace AODb.Data
                     else if (property.PropertyType == typeof(string)) 
                     { 
                         int strLen = reader.ReadInt32();
-                        property.SetValue(this, Encoding.Default.GetString(reader.ReadBytes(strLen))); 
+                        string str = Encoding.Default.GetString(reader.ReadBytes(strLen));
+                        str = str.Replace("\0", string.Empty);
+                        property.SetValue(this, str); 
                     }
                     else if (property.PropertyType == typeof(Hash)) 
                     { 

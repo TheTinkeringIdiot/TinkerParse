@@ -35,7 +35,7 @@ namespace AODb.Data.TemplateData
         public List<Spell> Items { get; set; }
         // public TemplateEvent Event { get { return (TemplateEvent)this.Identity.Instance; } }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        //[JsonConverter(typeof(StringEnumConverter))]
         public TemplateEvent Event { get; set; }
 
         // public SpellData(TemplateDataBase source)

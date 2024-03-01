@@ -36,7 +36,7 @@ namespace AODb.Data
         }
 
         [StreamData(100)]
-        [JsonConverter(typeof(StringEnumConverter))]
+        // [JsonConverter(typeof(StringEnumConverter))]
         public Stat Stat { get; set; }
 
         [StreamData(200)]

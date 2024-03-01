@@ -36,7 +36,7 @@ namespace AODb.Data
         /// This is Stat enum for Operator.Stat*, but other things for other operators.
         /// </summary>
         [StreamData(100)]  
-        [JsonConverter(typeof(TryStringEnumConverter))]
+        //[JsonConverter(typeof(TryStringEnumConverter))]
         public int Value1 { get; set; }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace AODb.Data
         public int Value2 { get; set; }
 
         [StreamData(300)]
-        [JsonConverter(typeof(StringEnumConverter))]
+        //[JsonConverter(typeof(StringEnumConverter))]
         public Operator Operator { get; set; }
 
         public override string ToString()

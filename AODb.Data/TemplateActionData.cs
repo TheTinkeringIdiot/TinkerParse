@@ -28,7 +28,7 @@ namespace AODb.Data
 {
     public class TemplateActionData
     {
-        [JsonConverter(typeof(StringEnumConverter))]
+        //[JsonConverter(typeof(StringEnumConverter))]
         public TemplateAction Action { get; set; }
         public List<Criterion> Criteria { get; set; }
 
