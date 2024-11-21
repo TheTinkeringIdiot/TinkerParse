@@ -29,24 +29,24 @@ namespace AODb.Data.Spells
     {
         // TODO: Verify this is correct.
         [StreamData(0)]
-        public uint Effect { get; set; }
+        public uint Value { get; set; }
 
         [StreamData(1)]
-        public int B { get; set; }
+        public int GfxLife { get; set; }
         
         [StreamData(2)]
-        public int C { get; set; }
+        public int GfxSize { get; set; }
         
         [StreamData(3)]
-        public int D { get; set; }
+        public int GfxRed { get; set; }
 
         [StreamData(4)]
-        public int E { get; set; }
+        public int GfxBlue { get; set; }
 
         [StreamData(5)]
-        public int F { get; set; }
+        public int GfxGreen { get; set; }
 
         [StreamData(6)]
-        public int G { get; set; }
+        public int GfxFade { get; set; }
     }
 }
