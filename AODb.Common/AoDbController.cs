@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AODb.Common
 {
-    internal class AoDbController
+    internal class AoDbController : IDbController
     {
         public const ulong FILE_LENGTH = 0x40000000;
 
@@ -20,7 +20,7 @@ namespace AODb.Common
         private uint _blockOffset;
         private uint _dataFileSize;
 
-        public DbController(string idxPath)
+        public AoDbController(string idxPath)
         {
             _idxPath = idxPath;
 
