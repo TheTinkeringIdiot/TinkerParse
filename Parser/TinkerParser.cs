@@ -16,6 +16,9 @@ namespace TinkerParser
         [Option(Required = true, HelpText = "Path to the Anarchy Online folder (Often C:\\Funcom\\Anarchy Online)")]
         public string AoPath { get; set; }
 
+        [Option("prk", Default = false, HelpText = "Use the Project Rubika client database")]
+        public bool Prk { get; set; }
+        
         [Option('o', "output-dir", Default = ".", HelpText = "Folder to place parsed data files")]
         public string OutputDir { get; set; }
 
@@ -65,17 +68,11 @@ namespace TinkerParser
 
         private ModelData ModelData { get; set; }
 
-        public TinkerParser(string aoPath, string outputPath)
+        public TinkerParser(string aoPath, string outputPath, bool isPrk)
         {
             Directory.SetCurrentDirectory(aoPath);
-            this.rdbController = new RdbController(aoPath);
+            this.rdbController = new RdbController(aoPath, isPrk);
             this.outputPath = outputPath;
-
-            //Experimental - parse beginnings of model data
-            // BinaryReader reader = rdbController.Get((int)RdbRecordType.ModelInfo, 1);
-            // ModelData mi = new ModelData();
-            // mi.PopulateFromStream(reader);
-            // this.ModelData = mi;
         }
 
         public void ParseAllItems()
@@ -83,16 +80,18 @@ namespace TinkerParser
             Console.WriteLine("Parsing Items...");
             foreach(KeyValuePair<int, ulong> kvp in rdbController.RecordTypeToId[(int)RdbRecordType.Item])
             {
-                BinaryReader reader = rdbController.Get((int)RdbRecordType.Item, kvp.Key);
-                Item item = new Item();
-                item.PopulateFromStream(reader);
-                this.Items.Add(item);
+                try
+                {
+                    BinaryReader reader = rdbController.Get((int)RdbRecordType.Item, kvp.Key);
+                    Item item = new Item();
+                    item.PopulateFromStream(reader);
+                    this.Items.Add(item);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error parsing item {kvp.Key}: {e.Message}");
+                }
             }
-
-            // BinaryReader reader = rdbController.Get((int)RdbRecordType.Item, 156771);
-            // Item item = new Item();
-            // item.PopulateFromStream(reader);
-            // this.Items.Add(item);
         }
 
         public void WriteJsonItems()
@@ -113,6 +112,19 @@ namespace TinkerParser
                 NanoProgram nano = new NanoProgram();
                 nano.PopulateFromStream(reader);
                 this.Nanos.Add(nano);
+
+                // foreach (StatValue sv in nano.StatValues)
+                // {
+                //     if (sv.Stat == Stat.None)
+                //     {
+                //         bool isHostile = (sv.RawValue & (int)Math.Pow(2, 15)) != 0;
+                //         bool isBuff = (sv.RawValue & (int)Math.Pow(2, 16)) != 0;
+                //         if (isHostile && !isBuff)
+                //         {
+                //             Console.WriteLine($"{nano.AOID} - {nano.Name}");
+                //         }
+                //     }
+                // }
             }
         }
 
@@ -306,7 +318,7 @@ namespace TinkerParser
             var parsedOpts = Parser.Default.ParseArguments<Options>(args);
             Options opts = parsedOpts.Value;
 
-            TinkerParser tinkerParser = new TinkerParser(opts.AoPath, opts.OutputDir);
+            TinkerParser tinkerParser = new TinkerParser(opts.AoPath, opts.OutputDir, opts.Prk);
 
             if(opts.Items) 
             { 

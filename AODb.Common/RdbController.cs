@@ -13,15 +13,22 @@ namespace AODb.Common
 {
     public class RdbController : IDisposable
     {
-        private DbController _dbController;
+        private IDbController _dbController;
 
         public Dictionary<int, Dictionary<int, ulong>> RecordTypeToId => _dbController.GetRecords();
 
         private bool disposedValue;
 
-        public RdbController(string path)
+        public RdbController(string path, bool isPrk)
         {
-            _dbController = new DbController(Path.Combine(path, "cd_image/data/db/ResourceDatabase.idx"));
+            if (isPrk)
+            {
+                _dbController = new PRKController(Path.Combine(path, "cd_image/rdb.db"));
+            }
+            else
+            {
+                _dbController = new AoDbController(Path.Combine(path, "cd_image/data/db/ResourceDatabase.idx"));
+            }
         }
 
         public BinaryReader Get(int type, int instance)
