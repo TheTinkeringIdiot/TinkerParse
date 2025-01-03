@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AODb.Common
 {
-    internal class DbController
+    internal class AoDbController
     {
         public const ulong FILE_LENGTH = 0x40000000;
 
