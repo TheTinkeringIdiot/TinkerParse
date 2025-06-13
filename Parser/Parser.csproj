@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AODb.Common\AODb.Common.csproj" />
     <ProjectReference Include="..\AODb.Data\AODb.Data.csproj" />
+    <ProjectReference Include="..\AODb.Core\AODb.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
