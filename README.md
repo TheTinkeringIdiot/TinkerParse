@@ -9,13 +9,15 @@ I've added the parsing capability the original repo lacked so it can read variou
 
 ### Command line options
 
-`Tinkerparse.exe <path to AO folder> [options]`
+`Tinkerparse.exe [options]`
 
 or
 
-`./Tinkerparse <path to AO folder> [options]`
+`./Tinkerparse [options]`
 
 All options are optional unless otherwise marked.
+
+`--ao-path` - Required. Path to the Anarchy Online folder (Often C:\Funcom\Anarchy Online)
 
 `-o, --output-dir` - The path where outputs of this application are written. Some options may create subfolders. If not provided, outputs are written to the same folder the application is running in.   
 
