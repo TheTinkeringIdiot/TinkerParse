@@ -25,6 +25,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
+using AODb.Common;
 using AODb.Common.Attributes;
 using Newtonsoft.Json.Converters;
 using AODb.Data.Attributes;
@@ -147,13 +148,13 @@ namespace AODb.Data
                     else if (property.PropertyType == typeof(string)) 
                     { 
                         int strLen = reader.ReadInt32();
-                        string str = Encoding.Default.GetString(reader.ReadBytes(strLen));
+                        string str = GameText.Cp1252.GetString(reader.ReadBytes(strLen));
                         str = str.Replace("\0", string.Empty);
                         property.SetValue(this, str); 
                     }
                     else if (property.PropertyType == typeof(Hash)) 
                     { 
-                        property.SetValue(this, new Hash(Encoding.Default.GetString(reader.ReadBytes(4)))); 
+                        property.SetValue(this, new Hash(GameText.Cp1252.GetString(reader.ReadBytes(4)))); 
                     }
                     else if (property.PropertyType == typeof(ActionFlag)) { property.SetValue(this, (ActionFlag)reader.ReadUInt32()); } 
                     else if (property.PropertyType == typeof(MonsterShape)) { property.SetValue(this, (MonsterShape)reader.ReadUInt32()); }

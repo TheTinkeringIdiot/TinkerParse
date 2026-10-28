@@ -21,6 +21,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using AODb.Common;
 
 namespace AODb.Data
 {
@@ -57,7 +58,7 @@ namespace AODb.Data
         public void PopulateFromStream(BinaryReader reader)
         {
             byte[] hash = reader.ReadBytes(4);
-            this.Hash = new Hash(Encoding.Default.GetString(hash.Reverse().ToArray()));
+            this.Hash = new Hash(GameText.Cp1252.GetString(hash.Reverse().ToArray()));
             int minlevel = reader.ReadByte();
             if(minlevel == 0)
             {

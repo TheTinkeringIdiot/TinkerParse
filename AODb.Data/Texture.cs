@@ -38,7 +38,7 @@ namespace AODb.Data
             if(peek != 0xff && peek != 0x89)
             {
                 //this is a ground texture, it has a name
-                string fullName = Encoding.Default.GetString(reader.ReadBytes(24));
+                string fullName = GameText.Cp1252.GetString(reader.ReadBytes(24));
                 this.Name = fullName.Substring(0, fullName.IndexOf('\x00'));
             }
 
