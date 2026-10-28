@@ -40,7 +40,7 @@ namespace AODb.Common
                     {
                         if (!_dataReaders.ContainsKey(0))
                         {
-                            _dataReaders.Add(0, new BinaryReader(new FileStream(f, FileMode.Open)));
+                            _dataReaders.Add(0, new BinaryReader(new FileStream(f, FileMode.Open, FileAccess.Read, FileShare.Read)));
                         }
                     }
                     else
@@ -49,7 +49,7 @@ namespace AODb.Common
                         var idx = int.Parse(idxStr);
                         if (!_dataReaders.ContainsKey(idx))
                         {
-                            _dataReaders.Add(idx, new BinaryReader(new FileStream(f, FileMode.Open)));
+                            _dataReaders.Add(idx, new BinaryReader(new FileStream(f, FileMode.Open, FileAccess.Read, FileShare.Read)));
                         }
                     }
                 }
@@ -60,11 +60,14 @@ namespace AODb.Common
         {
             _records = new Dictionary<int, Dictionary<int, ulong>>();
 
-            using (var reader = new BinaryReader(new FileStream(_idxPath, FileMode.Open)))
+            using (var reader = new BinaryReader(new FileStream(_idxPath, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 _blockOffset = reader.ReadUInt32_At(12);
                 var dataStart = reader.ReadInt32_At(72);
                 _dataFileSize = reader.ReadUInt32_At(184);
+
+                // Pre-18 clients use a single .dat (no size at 184), 512-byte index blocks and 32-bit offsets
+                bool legacy = _dataFileSize == 0xFFFFFFFF;
 
                 reader.BaseStream.Position = dataStart;
 
@@ -74,19 +77,29 @@ namespace AODb.Common
                     var prevBlock = reader.ReadInt32();
 
                     var recordCount = reader.ReadInt16();
-                    var unk1 = reader.ReadInt32();
-                    var unk2 = reader.ReadInt32();
+                    if (legacy)
+                    {
+                        reader.ReadInt64();
+                    }
+                    else
+                    {
+                        var unk1 = reader.ReadInt32();
+                        var unk2 = reader.ReadInt32();
 
-                    var unk3 = reader.ReadInt32();
-                    var unk4 = reader.ReadInt32();
-                    var unk5 = reader.ReadInt16();
+                        var unk3 = reader.ReadInt32();
+                        var unk4 = reader.ReadInt32();
+                        var unk5 = reader.ReadInt16();
+                    }
 
                     for (int i = 0; i < recordCount; i++)
                     {
                         ulong offset = reader.ReadUInt32();
-                        ulong offset2 = reader.ReadUInt32();
-                        offset = offset << 32;
-                        offset |= offset2;
+                        if (!legacy)
+                        {
+                            ulong offset2 = reader.ReadUInt32();
+                            offset = offset << 32;
+                            offset |= offset2;
+                        }
 
                         int type = reader.ReadInt32Rev();
                         int inst = reader.ReadInt32Rev();
