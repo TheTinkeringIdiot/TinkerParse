@@ -48,7 +48,7 @@ namespace AODb.Data
             this.SpellData = new List<SpellData>();
         }
 
-        public void PopulateFromStream(BinaryReader reader)
+        public void PopulateFromStream(BinaryReader reader, bool shopHashByteLevels = false)
         {
 
 
@@ -150,7 +150,7 @@ namespace AODb.Data
 
                     case (int)ItemTemplateDataType.ShopHash:
                         ShopHashData shd = new ShopHashData();
-                        shd.PopulateFromStream(reader);
+                        shd.PopulateFromStream(reader, shopHashByteLevels);
                         this.ShopHashData = shd;
                         break;
 

@@ -39,7 +39,7 @@ namespace AODb.Data.TemplateData
             this.Items = new List<ShopHashEntry>();
         }
 
-        public void PopulateFromStream(BinaryReader reader)
+        public void PopulateFromStream(BinaryReader reader, bool byteLevels = false)
         {
             int confirm = reader.ReadInt32();
             if(confirm != 37) { throw new Exception("CONFIRMATION CHECK FAILED!"); }
@@ -50,7 +50,7 @@ namespace AODb.Data.TemplateData
             for(int i = 0; i < numHashes; i++)
             {
                 ShopHashEntry hash = new ShopHashEntry();
-                hash.PopulateFromStream(reader);
+                hash.PopulateFromStream(reader, byteLevels);
                 this.Items.Add(hash);
             }
         }

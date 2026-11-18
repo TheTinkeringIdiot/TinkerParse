@@ -55,12 +55,13 @@ namespace AODb.Data
         /// </remarks>
         public int SpawnChance { get; set; }
 
-        public void PopulateFromStream(BinaryReader reader)
+        // Clients before 15.0 always store min/max level as bytes, so a leading zero is a real min level of 0
+        public void PopulateFromStream(BinaryReader reader, bool byteLevels = false)
         {
             byte[] hash = reader.ReadBytes(4);
             this.Hash = new Hash(GameText.Cp1252.GetString(hash.Reverse().ToArray()));
             int minlevel = reader.ReadByte();
-            if(minlevel == 0)
+            if(minlevel == 0 && !byteLevels)
             {
                 //Min/Max level don't fit in a byte (QL256+), so are shorts
                 minlevel = reader.ReadByte();

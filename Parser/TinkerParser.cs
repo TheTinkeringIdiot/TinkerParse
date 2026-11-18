@@ -8,6 +8,7 @@ using AODb.Common;
 using AODb.Common.Attributes;
 using AODb.Data;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TinkerParser
 {
@@ -18,7 +19,10 @@ namespace TinkerParser
 
         [Option("prk", Default = false, HelpText = "Use the Project Rubika client database")]
         public bool Prk { get; set; }
-        
+
+        [Option("client-version", Default = null, HelpText = "Client build the database came from (e.g. 14.9.1); selects pre-15.0 record formats. Omit for current clients")]
+        public string ClientVersion { get; set; }
+
         [Option('o', "output-dir", Default = ".", HelpText = "Folder to place parsed data files")]
         public string OutputDir { get; set; }
 
@@ -84,11 +88,32 @@ namespace TinkerParser
 
         private ModelData ModelData { get; set; }
 
-        public TinkerParser(string aoPath, string outputPath, bool isPrk)
+        // Item/nano records are XOR-obfuscated up to 13.91 (adbd); shop hash levels are byte-only before 15.0
+        private static readonly Version FirstPlainRecords = new Version(14, 0);
+        private static readonly Version FirstWideShopLevels = new Version(15, 0);
+
+        private readonly bool shopHashByteLevels;
+
+        public TinkerParser(string aoPath, string outputPath, bool isPrk, Version clientVersion)
         {
             Directory.SetCurrentDirectory(aoPath);
-            this.rdbController = new RdbController(aoPath, isPrk);
+            bool decodeLegacy = clientVersion != null && clientVersion < FirstPlainRecords;
+            this.shopHashByteLevels = clientVersion != null && clientVersion < FirstWideShopLevels;
+            this.rdbController = new RdbController(aoPath, isPrk, decodeLegacy);
             this.outputPath = outputPath;
+        }
+
+        public static Version ParseClientVersion(string value)
+        {
+            if (value == null)
+                return null;
+
+            Match match = Regex.Match(value, @"^\d+(\.\d+){0,3}");
+            if (!match.Success)
+                throw new ArgumentException($"Unrecognised client version '{value}'");
+
+            string numeric = match.Value.Contains('.') ? match.Value : match.Value + ".0";
+            return Version.Parse(numeric);
         }
 
         public void ParseAllItems()
@@ -100,7 +125,7 @@ namespace TinkerParser
                 {
                     BinaryReader reader = rdbController.Get((int)RdbRecordType.Item, kvp.Key);
                     Item item = new Item();
-                    item.PopulateFromStream(reader);
+                    item.PopulateFromStream(reader, this.shopHashByteLevels);
                     this.Items.Add(item);
                 }
                 catch (Exception e)
@@ -129,7 +154,7 @@ namespace TinkerParser
                 {
                     BinaryReader reader = rdbController.Get((int)RdbRecordType.NanoProgram, kvp.Key);
                     NanoProgram nano = new NanoProgram();
-                    nano.PopulateFromStream(reader);
+                    nano.PopulateFromStream(reader, this.shopHashByteLevels);
                     this.Nanos.Add(nano);
                 }
                 catch (Exception e)
@@ -351,7 +376,7 @@ namespace TinkerParser
             var parsedOpts = Parser.Default.ParseArguments<Options>(args);
             Options opts = parsedOpts.Value;
 
-            TinkerParser tinkerParser = new TinkerParser(opts.AoPath, opts.OutputDir, opts.Prk);
+            TinkerParser tinkerParser = new TinkerParser(opts.AoPath, opts.OutputDir, opts.Prk, TinkerParser.ParseClientVersion(opts.ClientVersion));
 
             if(opts.Items) 
             { 

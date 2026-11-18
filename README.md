@@ -21,6 +21,8 @@ All options are optional unless otherwise marked.
 
 `-o, --output-dir` - The path where outputs of this application are written. Some options may create subfolders. If not provided, outputs are written to the same folder the application is running in.   
 
+`--client-version` - The client build the database came from (e.g. `14.9.1`). Needed for historical clients: before 14.0, item and nano records are obfuscated and are decoded; before 15.0, shop hash levels are always bytes. Omit for current clients.
+
 `--items` - Parse all items, and output them according to the relevant output option.
 
 `--nanos` - Parse all nanoprograms, and output them according to the relevant output option.
