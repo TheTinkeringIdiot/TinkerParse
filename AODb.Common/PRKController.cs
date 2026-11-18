@@ -17,7 +17,7 @@ namespace AODb.Common
         public PRKController(string rdbPath)
         {
             _rdbPath = rdbPath;
-            string connectionString = $"Data Source={_rdbPath};Version=3";
+            string connectionString = $"Data Source={_rdbPath};Version=3;Read Only=True";
             _connection = new SQLiteConnection(connectionString);
 
             try

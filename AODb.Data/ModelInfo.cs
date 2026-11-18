@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using AODb.Common;
 using AODb.Common.Attributes;
 namespace AODb.Data
 {
@@ -47,7 +48,7 @@ namespace AODb.Data
                 int instanceId = reader.ReadInt32();
                 int nameLen = reader.ReadInt32();
                 byte[] nameBytes = reader.ReadBytes(nameLen);
-                string name = Encoding.Default.GetString(nameBytes);
+                string name = GameText.Cp1252.GetString(nameBytes);
 
                 this.Instances.Add(instanceId, name);
             }

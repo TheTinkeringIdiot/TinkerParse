@@ -19,8 +19,12 @@ namespace AODb.Common
 
         private bool disposedValue;
 
-        public RdbController(string path, bool isPrk)
+        private readonly bool _decodeLegacyRecords;
+
+        public RdbController(string path, bool isPrk, bool decodeLegacyRecords = false)
         {
+            _decodeLegacyRecords = decodeLegacyRecords;
+
             if (isPrk)
             {
                 _dbController = new PRKController(Path.Combine(path, "cd_image/rdb.db"));
@@ -33,7 +37,7 @@ namespace AODb.Common
 
         public BinaryReader Get(int type, int instance)
         {
-            var result = _dbController.Get(type, instance);
+            var result = GetRaw(type, instance);
             if (result == null)
                 return null;
             return new BinaryReader(new MemoryStream(result));
@@ -101,6 +105,9 @@ namespace AODb.Common
 
             if (result == null)
                 return null;
+
+            if (_decodeLegacyRecords && LegacyRecordCipher.AppliesTo(type))
+                LegacyRecordCipher.Decode(result);
 
             return result;
         }

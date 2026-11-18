@@ -48,7 +48,7 @@ namespace AODb.Data
             this.SpellData = new List<SpellData>();
         }
 
-        public void PopulateFromStream(BinaryReader reader)
+        public void PopulateFromStream(BinaryReader reader, bool shopHashByteLevels = false)
         {
 
 
@@ -87,8 +87,8 @@ namespace AODb.Data
             int nameLen = reader.ReadInt16();
             int descLen = reader.ReadInt16();
 
-            Name = Encoding.Default.GetString(reader.ReadBytes(nameLen));
-            Description = Encoding.Default.GetString(reader.ReadBytes(descLen));
+            Name = GameText.Cp1252.GetString(reader.ReadBytes(nameLen));
+            Description = GameText.Cp1252.GetString(reader.ReadBytes(descLen));
 
             // if(this.AOID == 266576)
             if(this.AOID == 259783)
@@ -150,7 +150,7 @@ namespace AODb.Data
 
                     case (int)ItemTemplateDataType.ShopHash:
                         ShopHashData shd = new ShopHashData();
-                        shd.PopulateFromStream(reader);
+                        shd.PopulateFromStream(reader, shopHashByteLevels);
                         this.ShopHashData = shd;
                         break;
 

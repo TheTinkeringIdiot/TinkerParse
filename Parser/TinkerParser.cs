@@ -8,6 +8,7 @@ using AODb.Common;
 using AODb.Common.Attributes;
 using AODb.Data;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TinkerParser
 {
@@ -18,12 +19,18 @@ namespace TinkerParser
 
         [Option("prk", Default = false, HelpText = "Use the Project Rubika client database")]
         public bool Prk { get; set; }
-        
+
+        [Option("client-version", Default = null, HelpText = "Client build the database came from (e.g. 14.9.1); selects pre-15.0 record formats. Omit for current clients")]
+        public string ClientVersion { get; set; }
+
         [Option('o', "output-dir", Default = ".", HelpText = "Folder to place parsed data files")]
         public string OutputDir { get; set; }
 
         [Option("output-json", Default = true, HelpText = "Output item/nano data as JSON (Default)")]
         public bool OutputJson { get; set; }
+
+        [Option("errors-file", Default = null, HelpText = "Write per-record parse errors as JSON to this file")]
+        public string ErrorsFile { get; set; }
 
         [Option("items", Default = false, HelpText = "Parse all items")]
         public bool Items { get; set; }
@@ -46,6 +53,18 @@ namespace TinkerParser
         [Option("textures", Default = false, HelpText = "Export general game textures")]
         public bool Textures { get; set; }
     }
+    internal class ParseError
+    {
+        [JsonProperty("kind")]
+        public string Kind { get; set; }
+
+        [JsonProperty("aoid")]
+        public int Aoid { get; set; }
+
+        [JsonProperty("error")]
+        public string Error { get; set; }
+    }
+
     internal class TinkerParser
     {
         private RdbController rdbController;
@@ -54,6 +73,7 @@ namespace TinkerParser
 
         private List<Item> Items = new List<Item>();
         private List<NanoProgram> Nanos = new List<NanoProgram>();
+        private List<ParseError> ParseErrors = new List<ParseError>();
         private List<Icon> Icons = new List<Icon>();
         private List<Texture> Textures = new List<Texture>();
         private List<Texture> DungeonTextures = new List<Texture>();
@@ -68,11 +88,32 @@ namespace TinkerParser
 
         private ModelData ModelData { get; set; }
 
-        public TinkerParser(string aoPath, string outputPath, bool isPrk)
+        // Item/nano records are XOR-obfuscated up to 13.91 (adbd); shop hash levels are byte-only before 15.0
+        private static readonly Version FirstPlainRecords = new Version(14, 0);
+        private static readonly Version FirstWideShopLevels = new Version(15, 0);
+
+        private readonly bool shopHashByteLevels;
+
+        public TinkerParser(string aoPath, string outputPath, bool isPrk, Version clientVersion)
         {
             Directory.SetCurrentDirectory(aoPath);
-            this.rdbController = new RdbController(aoPath, isPrk);
+            bool decodeLegacy = clientVersion != null && clientVersion < FirstPlainRecords;
+            this.shopHashByteLevels = clientVersion != null && clientVersion < FirstWideShopLevels;
+            this.rdbController = new RdbController(aoPath, isPrk, decodeLegacy);
             this.outputPath = outputPath;
+        }
+
+        public static Version ParseClientVersion(string value)
+        {
+            if (value == null)
+                return null;
+
+            Match match = Regex.Match(value, @"^\d+(\.\d+){0,3}");
+            if (!match.Success)
+                throw new ArgumentException($"Unrecognised client version '{value}'");
+
+            string numeric = match.Value.Contains('.') ? match.Value : match.Value + ".0";
+            return Version.Parse(numeric);
         }
 
         public void ParseAllItems()
@@ -84,12 +125,13 @@ namespace TinkerParser
                 {
                     BinaryReader reader = rdbController.Get((int)RdbRecordType.Item, kvp.Key);
                     Item item = new Item();
-                    item.PopulateFromStream(reader);
+                    item.PopulateFromStream(reader, this.shopHashByteLevels);
                     this.Items.Add(item);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine($"Error parsing item {kvp.Key}: {e.Message}");
+                    this.ParseErrors.Add(new ParseError { Kind = "item", Aoid = kvp.Key, Error = $"{e.GetType().Name}: {e.Message}" });
                 }
             }
         }
@@ -108,10 +150,18 @@ namespace TinkerParser
             Console.WriteLine("Parsing Nanos...");
             foreach(KeyValuePair<int, ulong> kvp in rdbController.RecordTypeToId[(int)RdbRecordType.NanoProgram])
             {
-                BinaryReader reader = rdbController.Get((int)RdbRecordType.NanoProgram, kvp.Key);
-                NanoProgram nano = new NanoProgram();
-                nano.PopulateFromStream(reader);
-                this.Nanos.Add(nano);
+                try
+                {
+                    BinaryReader reader = rdbController.Get((int)RdbRecordType.NanoProgram, kvp.Key);
+                    NanoProgram nano = new NanoProgram();
+                    nano.PopulateFromStream(reader, this.shopHashByteLevels);
+                    this.Nanos.Add(nano);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error parsing nano {kvp.Key}: {e.Message}");
+                    this.ParseErrors.Add(new ParseError { Kind = "nano", Aoid = kvp.Key, Error = $"{e.GetType().Name}: {e.Message}" });
+                }
 
                 // foreach (StatValue sv in nano.StatValues)
                 // {
@@ -134,6 +184,14 @@ namespace TinkerParser
             using(StreamWriter file = File.CreateText(fileName))
             {
                 file.Write(JsonConvert.SerializeObject(this.Nanos, Formatting.Indented));
+            }
+        }
+
+        public void WriteParseErrors(string fileName)
+        {
+            using(StreamWriter file = File.CreateText(fileName))
+            {
+                file.Write(JsonConvert.SerializeObject(this.ParseErrors, Formatting.Indented));
             }
         }
 
@@ -318,7 +376,7 @@ namespace TinkerParser
             var parsedOpts = Parser.Default.ParseArguments<Options>(args);
             Options opts = parsedOpts.Value;
 
-            TinkerParser tinkerParser = new TinkerParser(opts.AoPath, opts.OutputDir, opts.Prk);
+            TinkerParser tinkerParser = new TinkerParser(opts.AoPath, opts.OutputDir, opts.Prk, TinkerParser.ParseClientVersion(opts.ClientVersion));
 
             if(opts.Items) 
             { 
@@ -329,6 +387,10 @@ namespace TinkerParser
             { 
                 tinkerParser.ParseAllNanos();
                 if(opts.OutputJson) { tinkerParser.WriteJsonNanos(); } 
+            }
+            if(opts.ErrorsFile != null)
+            {
+                tinkerParser.WriteParseErrors(opts.ErrorsFile);
             }
             if(opts.Icons) 
             { 
